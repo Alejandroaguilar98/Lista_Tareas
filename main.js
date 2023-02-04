@@ -14,9 +14,8 @@ function eventListeners() {
     todoList = JSON.parse( localStorage.getItem('todos')) || [];
 
     if (todoList.length > 0) {
-      input.value = "";
-      empty.style.display = "none";
       
+      mensajeAdvertencia("limpiar");
       agregarMsjDom(todoList);
     }
   });
@@ -38,8 +37,9 @@ function imprimirtodoList(e) {
 
     todoList = [...todoList, nuevoTodo];
     agregarMsjDom(todoList)
+    mensajeAdvertencia("limpiar")
   } else {
-    mensajeDeError();
+    mensajeAdvertencia("error");
   };
 };
 function agregarMsjDom(arr) {
@@ -98,7 +98,22 @@ function sincronizarStorage() {
   localStorage.setItem('todos', JSON.stringify(todoList));
 }
 function borrarTodo(id) {
-  todoList = todoList.filter( todo => todo.id !== id );
-
-  agregarMsjDom(todoList)
+    todoList = todoList.filter( todo => todo.id !== id );
+    agregarMsjDom(todoList)
+    if(todoList.length === 0) {
+      mensajeAdvertencia("vacio")
+    } 
+}
+function mensajeAdvertencia(tipo) {
+  switch (tipo) {
+    case "error": 
+      mensajeDeError()
+      break;
+    case "limpiar":
+      input.value = "";
+      empty.style.display = "none";
+      break;
+    case "vacio":
+      empty.style.display = "block";
+  }
 }
