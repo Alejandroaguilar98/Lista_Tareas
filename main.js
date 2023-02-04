@@ -70,8 +70,8 @@ function agregarMsjDom(arr) {
     ul.appendChild(li);
     li.appendChild(deleteBtn);
 
-    sincronizarStorage();
   });
+  sincronizarStorage();
 }
 function mensajeDeError() {
   limpiarMsjError()
