@@ -1,43 +1,104 @@
 const input = document.querySelector("input");
 const addBtn = document.querySelector(".btn-add");
 const ul = document.querySelector("ul");
+const conten_li = document.querySelector(".li-container");
 const empty = document.querySelector(".empty");
+let todoList = [];
 
-addBtn.addEventListener("click", (e) => {
+
+// EventListeners 
+eventListeners()
+function eventListeners() {
+  addBtn.addEventListener("click", imprimirtodoList);
+  document.addEventListener("DOMContentLoaded", () => {
+    todoList = JSON.parse( localStorage.getItem('todos')) || [];
+
+    if (todoList.length > 0) {
+      input.value = "";
+      empty.style.display = "none";
+      
+      agregarMsjDom(todoList);
+    }
+  });
+}
+
+
+// funciones
+
+function imprimirtodoList(e) {
   e.preventDefault();
 
   const text = input.value;
 
-  if (text !== "") {
+  if (text.trim() !== "") {
+    const nuevoTodo = {
+      id: Date.now(),
+      contenido: text
+    };
+
+    todoList = [...todoList, nuevoTodo];
+    agregarMsjDom(todoList)
+  } else {
+    mensajeDeError();
+  };
+};
+function agregarMsjDom(arr) {
+
+  ul.innerHTML = "";
+  
+  arr.forEach(element => {
     const li = document.createElement("li");
     const p = document.createElement("p");
-    p.textContent = text;
+    const deleteBtn = document.createElement("button");
 
+    p.textContent = element.contenido;
+    deleteBtn.textContent = "X";
+    deleteBtn.className = "btn-delete";
+
+    deleteBtn.addEventListener("click", () => {
+      const items = document.querySelectorAll("li");
+
+      borrarTodo(element.id);
+
+      if (items.length === 0) {
+        empty.style.display = "block";
+      }
+    });
+
+    
     li.appendChild(p);
-    li.appendChild(addDeleteBtn());
     ul.appendChild(li);
+    li.appendChild(deleteBtn);
 
-    input.value = "";
-    empty.style.display = "none";
-  }
-});
-
-function addDeleteBtn() {
-  const deleteBtn = document.createElement("button");
-
-  deleteBtn.textContent = "X";
-  deleteBtn.className = "btn-delete";
-
-  deleteBtn.addEventListener("click", (e) => {
-    const item = e.target.parentElement;
-    ul.removeChild(item);
-
-    const items = document.querySelectorAll("li");
-
-    if (items.length === 0) {
-      empty.style.display = "block";
-    }
+    sincronizarStorage();
   });
+}
+function mensajeDeError() {
+  limpiarMsjError()
 
-  return deleteBtn;
+  const mensajeError = document.createElement("p");
+
+  mensajeError.textContent = "El mensaje es vacio";
+  mensajeError.className = "msjError";
+
+  conten_li.appendChild(mensajeError);
+
+  setTimeout(function() {
+    limpiarMsjError()
+  }, 2000);
+}
+function limpiarMsjError() {
+  // Comprueba si ya existe una alerta
+  const msjErr = conten_li.querySelector('.msjError');
+  if(msjErr) {
+    conten_li.removeChild(msjErr);
+  }
+}
+function sincronizarStorage() {
+  localStorage.setItem('todos', JSON.stringify(todoList));
+}
+function borrarTodo(id) {
+  todoList = todoList.filter( todo => todo.id !== id );
+
+  agregarMsjDom(todoList)
 }
