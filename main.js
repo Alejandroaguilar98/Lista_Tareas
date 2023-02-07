@@ -81,7 +81,7 @@ function mensajeDeError() {
   mensajeError.textContent = "El mensaje es vacio";
   mensajeError.className = "msjError";
 
-  conten_li.appendChild(mensajeError);
+  conten_li.insertBefore(mensajeError, ul);
 
   setTimeout(function() {
     limpiarMsjError()
